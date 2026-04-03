@@ -52,9 +52,9 @@ A classic Dynamic Programming approach that computes the shortest paths between 
 - Ensure Java 21 or Higher is installed on your computer.
 
 ### Compilation
-Open CMD and Make sure the build folder was created by using command in below:
+Open **PowerShell** and Make sure the build folder was created by using command in below:
 ```bash
-javac -d build (Get-ChildItem -Recurse src/*.java).FullName 
+javac -d build (Get-ChildItem -Recurse src/*.java).FullName
 ```
 
 ### How to Run
