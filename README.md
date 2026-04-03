@@ -1,6 +1,6 @@
 # Search Algorithms Collection in Java
 
-This repository contains a comprehensive collection of fundamental graph algorithms implemented in Java. It covers various paradigms including **Uninformed Search**, **Informed (Heuristic) Search**, **Dynamic Programming**, and **Optimization** (Branch and Bound).
+This repository contains a comprehensive collection of fundamental search algorithms implemented in Java. It covers various paradigms including **Uninformed Search**, **Informed (Heuristic) Search**, **Dynamic Programming**, and **Optimization** (Branch and Bound).
 
 ---
 
