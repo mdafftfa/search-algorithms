@@ -48,9 +48,22 @@ A classic Dynamic Programming approach that computes the shortest paths between 
 
 ## 🛠️ How to Use
 
-Each class contains a `main` method for immediate testing and demonstration.
+- Clone this repository `git clone https://github.com/mdafftfa/search-algorithms`
+- Ensure Java 21 or Higher is installed on your computer.
 
 ### Compilation
-Navigate to the root directory and compile the classes:
+Open CMD and Make sure the build folder was created by using command in below:
 ```bash
-javac org/mdafftfa/*/*.java
+javac -d build (Get-ChildItem -Recurse src/*.java).FullName 
+```
+
+### How to Run
+Use the following commands to run an individual search algorithm: 
+```bash
+java -cp build org.mdafftfa.a_star.Graph
+java -cp build org.mdafftfa.best_first_search.Graph
+java -cp build org.mdafftfa.branch_and_bound.Graph
+java -cp build org.mdafftfa.breadth_first_search.Graph
+java -cp build org.mdafftfa.depth_first_search.Graph
+java -cp build org.mdafftfa.dynamic_programming.Graph
+```
