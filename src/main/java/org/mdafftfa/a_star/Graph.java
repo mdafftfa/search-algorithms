@@ -120,6 +120,10 @@ public class Graph {
         while (!openList.isEmpty()) {
             Node current = openList.poll();
 
+            if (current.gScore > gScore[current.id]) {
+                continue;
+            }
+
             if (current.id == goal) {
                 printPath(parent, goal, gScore[goal]);
                 return;

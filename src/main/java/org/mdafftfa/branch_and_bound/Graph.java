@@ -4,21 +4,19 @@ import java.util.*;
 
 /**
  * The Graph class implements the Traveling Salesperson Problem (TSP)
- * using the Branch and Bound algorithmic strategy.
- * This approach uses a state-space tree and a priority queue to find
- * the optimal (minimum cost) tour that visits every city exactly once.
+ * using the Branch and Bound algorithmic strategy with an improved Bound calculation.
  */
 public class Graph {
 
     /** Total number of vertices (cities) in the graph */
     private final int vCount;
 
-    /** Adjacency matrix representing the edge weights (distances) between cities */
+    /** Adjacency matrix representing the edge weights between cities */
     private final int[][] adjMatrix;
 
     /**
      * Constructor to initialize the graph with 'v' vertices.
-     * @param v The number of cities in the TSP.
+     * @param v The number of cities.
      */
     public Graph(int v) {
         this.vCount = v;
@@ -26,10 +24,10 @@ public class Graph {
     }
 
     /**
-     * Adds an undirected edge between city 'u' and city 'v' with a specific weight.
+     * Adds an undirected edge between city 'u' and city 'v'.
      * @param u Source city index.
      * @param v Destination city index.
-     * @param weight Travel cost between the two cities.
+     * @param weight Travel cost.
      */
     public void addEdge(int u, int v, int weight) {
         adjMatrix[u][v] = weight;
@@ -38,18 +36,12 @@ public class Graph {
 
     /**
      * Inner class representing a node in the State-Space Tree.
-     * Each node maintains the state of the tour including cost, level, and visited cities.
      */
     static class Node implements Comparable<Node> {
-        /** The depth of the node in the state-space tree */
         int level;
-        /** The current city where the salesperson is located */
         int currentCity;
-        /** The actual accumulated cost from the root to this node */
         int cost;
-        /** The lower bound of the total cost for the subtree rooted at this node */
         int bound;
-        /** Boolean array to track cities already visited in the current path */
         boolean[] visited;
 
         /**
@@ -67,12 +59,6 @@ public class Graph {
             this.visited[currentCity] = true;
         }
 
-        /**
-         * Compares nodes based on their lower bound value.
-         * This allows the PriorityQueue to always expand the node with the minimum bound.
-         * @param other The other node to compare with.
-         * @return Comparison result for sorting.
-         */
         @Override
         public int compareTo(Node other) {
             return Integer.compare(this.bound, other.bound);
@@ -80,32 +66,46 @@ public class Graph {
     }
 
     /**
-     * Calculates the lower bound for a given node.
-     * The bound represents the estimated minimum total cost if this path is completed.
+     * Calculates a more accurate Lower Bound.
+     * Improvement: It considers the minimum edge to enter each unvisited city
+     * AND the minimum edge to return to the start (city 0).
      * @param node The current node to calculate the bound for.
      * @return The calculated lower bound cost.
      */
     private int calculateBound(Node node) {
         int bound = node.cost;
+
         for (int i = 0; i < vCount; i++) {
             if (!node.visited[i]) {
-                int min = Integer.MAX_VALUE;
+                int minEdge = Integer.MAX_VALUE;
                 for (int j = 0; j < vCount; j++) {
-                    if (adjMatrix[i][j] > 0 && adjMatrix[i][j] < min) {
-                        min = adjMatrix[i][j];
+                    if (i != j && adjMatrix[i][j] > 0) {
+                        minEdge = Math.min(minEdge, adjMatrix[i][j]);
                     }
                 }
-                if (min != Integer.MAX_VALUE) {
-                    bound += min;
+                if (minEdge != Integer.MAX_VALUE) {
+                    bound += minEdge;
                 }
             }
         }
+
+        if (node.level < vCount - 1) {
+            int minReturn = Integer.MAX_VALUE;
+            for (int i = 0; i < vCount; i++) {
+                if (adjMatrix[i][0] > 0) {
+                    minReturn = Math.min(minReturn, adjMatrix[i][0]);
+                }
+            }
+            if (minReturn != Integer.MAX_VALUE) {
+                bound += minReturn;
+            }
+        }
+
         return bound;
     }
 
     /**
      * Solves the Traveling Salesperson Problem using the Branch and Bound technique.
-     * It uses a Least-Cost Search by maintaining a PriorityQueue of nodes.
      */
     public void solveTSP() {
         PriorityQueue<Node> pq = new PriorityQueue<>();
@@ -125,9 +125,11 @@ public class Graph {
             }
 
             if (minNode.level == vCount - 1) {
-                int totalCost = minNode.cost + adjMatrix[minNode.currentCity][0];
-                if (totalCost < minFinalCost) {
-                    minFinalCost = totalCost;
+                if (adjMatrix[minNode.currentCity][0] > 0) {
+                    int totalCost = minNode.cost + adjMatrix[minNode.currentCity][0];
+                    if (totalCost < minFinalCost) {
+                        minFinalCost = totalCost;
+                    }
                 }
                 continue;
             }
@@ -151,7 +153,7 @@ public class Graph {
     }
 
     /**
-     * Main entry point to demonstrate the Branch and Bound TSP solver.
+     * Main entry point.
      * @param args Command-line arguments.
      */
     public static void main(String[] args) {
